@@ -6,7 +6,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             title: const Text("APP TPC"),
           ),
-          body: HomeScreen(),
+          body: const Index(),
         ),
       ),
     );
