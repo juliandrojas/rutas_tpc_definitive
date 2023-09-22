@@ -20,7 +20,7 @@ class _IndexState extends State<Index> {
   Future<void> getEmpresas() async {
     try {
       final dio = Dio();
-      final response = await dio.get('http://192.168.0.101:3000/data');
+      final response = await dio.get('http://192.168.0.101:3000/api/empresas');
       setState(() {
         empresas = response.data['empresas'];
       });
@@ -54,15 +54,15 @@ class _IndexState extends State<Index> {
                       // Puedes usar Navigator para la navegación
                       // Navigator.pushNamed(context, '/ruta_de_la_empresa');
                       // O puedes hacer lo que necesites al pulsar la tarjeta
-                      print('Tocaste la empresa ${empresa['nombre']}');
+                      print('Tocaste la empresa ${empresa['nombreempresa']}');
                     },
                     child: Card(
                       child: ListTile(
-                        title: Text(
-                          empresa['nombre'] ?? 'Nombre no disponible',
-                          style: TextStyle(),
+                        title: Center(
+                          child: Text(
+                            empresa['nombreempresa'] ?? 'Nombre no disponible',
+                          ),
                         ),
-                        subtitle: Text('ID: ${empresa['idempresa']}'),
                       ),
                     ),
                   );
