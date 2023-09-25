@@ -20,7 +20,8 @@ class _IndexState extends State<Index> {
   Future<void> getEmpresas() async {
     try {
       final dio = Dio();
-      final response = await dio.get('http://192.168.0.101:3000/api/empresas');
+      final response =
+          await dio.get('http://192.168.0.101:3000/empresas/mostrarDatos');
       setState(() {
         empresas = response.data['empresas'];
       });
@@ -32,46 +33,59 @@ class _IndexState extends State<Index> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (empresas != null && empresas!.isNotEmpty)
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      2, // Puedes ajustar esto según tus necesidades
-                  childAspectRatio:
-                      1.0, // Puedes ajustar esto para cambiar el tamaño de las tarjetas
-                ),
-                itemCount: empresas!.length,
-                itemBuilder: (context, index) {
-                  final empresa = empresas![index];
-                  return GestureDetector(
-                    onTap: () {
-                      // Aquí puedes navegar a la ruta de la empresa
-                      // Puedes usar Navigator para la navegación
-                      // Navigator.pushNamed(context, '/ruta_de_la_empresa');
-                      // O puedes hacer lo que necesites al pulsar la tarjeta
-                      print('Tocaste la empresa ${empresa['nombreempresa']}');
-                    },
-                    child: Card(
-                      child: ListTile(
-                        title: Center(
-                          child: Text(
-                            empresa['nombreempresa'] ?? 'Nombre no disponible',
-                          ),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (empresas != null && empresas!.isNotEmpty)
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:
+                        2, // Puedes ajustar esto según tus necesidades
+                    childAspectRatio:
+                        1.0, // Puedes ajustar esto para cambiar el tamaño de las tarjetas
+                  ),
+                  itemCount: empresas!.length,
+                  itemBuilder: (context, index) {
+                    final empresa = empresas![index];
+                    return GestureDetector(
+                      onTap: () {
+                        // Aquí puedes navegar a la ruta de la empresa
+                        // Puedes usar Navigator para la navegación
+                        // Navigator.pushNamed(context, '/ruta_de_la_empresa');
+                        // O puedes hacer lo que necesites al pulsar la tarjeta
+                        print('Tocaste la empresa ${empresa['nombreempresa']}');
+                      },
+                      child: Card(
+                        child: Column(
+                          children: [
+                            // Mostrar la imagen desde la URL
+                            Image.network(
+                              empresa['imagenempresa'],
+                              height:
+                                  100, // Ajusta el tamaño de la imagen según tus necesidades
+                            ),
+                            ListTile(
+                              title: Center(
+                                child: Text(
+                                  empresa['nombreempresa'] ??
+                                      'Nombre no disponible',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
-            )
-          else
-            Text('No hay datos'),
-        ],
+                    );
+                  },
+                ),
+              )
+            else
+              const Text('No hay datos'),
+          ],
+        ),
       ),
     );
   }
