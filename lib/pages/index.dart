@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -14,21 +16,21 @@ class _IndexState extends State<Index> {
   @override
   void initState() {
     super.initState();
-    getEmpresas();
-  }
-
-  Future<void> getEmpresas() async {
-    try {
-      final dio = Dio();
-      final response =
-          await dio.get('http://192.168.0.101:3000/empresas/mostrarDatos');
-      setState(() {
-        empresas = response.data['empresas'];
+    // Realiza una solicitud a la API después de que el frame haya sido renderizado
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Utiliza Dio para realizar la solicitud HTTP
+      Dio().get("http://localhost:3000/empresas/mostrarDatos").then((response) {
+        // Si la respuesta es exitosa, actualiza la lista de empresas
+        if (response.statusCode == 200) {
+          setState(() {
+            empresas = response.data['empresas'];
+            String jsonString = jsonEncode(empresas);
+            // Imprimimos el JSON legible
+            print(jsonString);
+          });
+        }
       });
-      print(empresas);
-    } catch (error) {
-      print('Error al obtener las empresas: $error');
-    }
+    });
   }
 
   @override
@@ -40,43 +42,13 @@ class _IndexState extends State<Index> {
           children: [
             if (empresas != null && empresas!.isNotEmpty)
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount:
-                        2, // Puedes ajustar esto según tus necesidades
-                    childAspectRatio:
-                        1.0, // Puedes ajustar esto para cambiar el tamaño de las tarjetas
-                  ),
+                child: ListView.builder(
                   itemCount: empresas!.length,
                   itemBuilder: (context, index) {
                     final empresa = empresas![index];
-                    return GestureDetector(
-                      onTap: () {
-                        // Aquí puedes navegar a la ruta de la empresa
-                        // Puedes usar Navigator para la navegación
-                        // Navigator.pushNamed(context, '/ruta_de_la_empresa');
-                        // O puedes hacer lo que necesites al pulsar la tarjeta
-                        print('Tocaste la empresa ${empresa['nombreempresa']}');
-                      },
-                      child: Card(
-                        child: Column(
-                          children: [
-                            // Mostrar la imagen desde la URL
-                            Image.network(
-                              empresa['imagenempresa'],
-                              height:
-                                  100, // Ajusta el tamaño de la imagen según tus necesidades
-                            ),
-                            ListTile(
-                              title: Center(
-                                child: Text(
-                                  empresa['nombreempresa'] ??
-                                      'Nombre no disponible',
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                    return ListTile(
+                      title: Text(
+                        empresa['nombreempresa'] ?? 'Nombre no disponible',
                       ),
                     );
                   },
